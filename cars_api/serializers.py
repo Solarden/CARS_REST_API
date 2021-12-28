@@ -1,6 +1,8 @@
 import urllib.request
 import json
 
+from django.db.models import Avg
+
 from cars_api import models
 from rest_framework import serializers
 
@@ -8,7 +10,7 @@ from rest_framework import serializers
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Car
-        fields = ['make', 'model']
+        fields = ['id', 'make', 'model', 'avg_rating']
 
     def validate(self, values):
         url = f'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/{values["make"]}?format=json'
@@ -25,3 +27,19 @@ class CarSerializer(serializers.ModelSerializer):
                     return values
             else:
                 raise serializers.ValidationError("Car does not exist!")
+
+    id = serializers.SerializerMethodField()
+
+    def get_id(self, object):
+        return object.id
+
+    avg_rating = serializers.SerializerMethodField()
+
+    def get_avg_rating(self, object):
+        return models.CarRate.objects.filter(car_id=object.pk).values('rating').aggregate(Avg('rating'))['rating__avg']
+
+
+class CarRateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CarRate
+        fields = ['car_id', 'rating']

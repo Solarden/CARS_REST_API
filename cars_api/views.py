@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from rest_framework.response import Response
 
 
-class CarsListView(generics.ListCreateAPIView):
+class CarsListCreateView(generics.ListCreateAPIView):
     queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
 
@@ -19,3 +19,10 @@ class CarsListView(generics.ListCreateAPIView):
 class CarsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
+
+#     TODO DELETE /cars/ does not exist
+
+
+class RateCarsListCreateView(generics.ListCreateAPIView):
+    queryset = models.CarRate.objects.all()
+    serializer_class = serializers.CarRateSerializer
