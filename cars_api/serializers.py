@@ -8,6 +8,9 @@ from rest_framework import serializers
 
 
 class CarSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Car
         fields = ['id', 'make', 'model', 'avg_rating']
@@ -28,12 +31,8 @@ class CarSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError("Car does not exist!")
 
-    id = serializers.SerializerMethodField()
-
     def get_id(self, object):
         return object.id
-
-    avg_rating = serializers.SerializerMethodField()
 
     def get_avg_rating(self, object):
         return models.CarRate.objects.filter(car_id=object.pk).values('rating').aggregate(Avg('rating'))['rating__avg']
@@ -43,3 +42,14 @@ class CarRateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CarRate
         fields = ['car_id', 'rating']
+
+
+class PopularCarsSerializer(serializers.ModelSerializer):
+    rates_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Car
+        fields = ['id', 'make', 'model', 'rates_number']
+
+    def get_rates_number(self, object):
+        return models.CarRate.objects.filter(car_id=object.pk).count()

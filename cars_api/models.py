@@ -15,4 +15,3 @@ RATING = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
 class CarRate(models.Model):
     car_id = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
     rating = models.IntegerField(choices=RATING)
-

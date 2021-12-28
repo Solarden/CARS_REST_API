@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from cars_api import models, serializers
 from django.db import IntegrityError
 from rest_framework.response import Response
@@ -20,9 +20,15 @@ class CarsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
 
+
 #     TODO DELETE /cars/ does not exist
 
 
-class RateCarsListCreateView(generics.ListCreateAPIView):
+class RateCarsCreateView(generics.CreateAPIView):
     queryset = models.CarRate.objects.all()
     serializer_class = serializers.CarRateSerializer
+
+
+class PopularCarsListView(generics.ListAPIView):
+    queryset = models.Car.objects.all()
+    serializer_class = serializers.PopularCarsSerializer

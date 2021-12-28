@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cars/', views.CarsListCreateView.as_view(), name='cars-list-create-view'),
     path('cars/<int:pk>/', views.CarsView.as_view(), name='cars-detail'),
-    path('rate/', views.RateCarsListCreateView.as_view(), name='cars-rate-list-create-view'),
+    path('rate/', views.RateCarsCreateView.as_view(), name='cars-rate-create-view'),
+    path('popular/', views.PopularCarsListView.as_view(), name='cars-popular-list-view'),
 ]
