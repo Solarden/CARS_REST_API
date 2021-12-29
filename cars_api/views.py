@@ -1,4 +1,5 @@
-from rest_framework import generics, status, viewsets
+from django.db.models import Count
+from rest_framework import generics, status
 from cars_api import models, serializers
 from django.db import IntegrityError
 from rest_framework.response import Response
@@ -20,6 +21,11 @@ class CarsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
 
+    def destroy(self, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object())
+        super().destroy(*args, **kwargs)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 #     TODO DELETE /cars/ does not exist
 
@@ -30,5 +36,7 @@ class RateCarsCreateView(generics.CreateAPIView):
 
 
 class PopularCarsListView(generics.ListAPIView):
-    queryset = models.Car.objects.all()
     serializer_class = serializers.PopularCarsSerializer
+
+    def get_queryset(self):
+        return models.Car.objects.annotate(rates_count=Count("carrate")).order_by('-rates_count')
