@@ -24,10 +24,7 @@ class CarsView(generics.RetrieveUpdateDestroyAPIView):
     def destroy(self, *args, **kwargs):
         serializer = self.get_serializer(self.get_object())
         super().destroy(*args, **kwargs)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-#     TODO DELETE /cars/ does not exist
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
 class RateCarsCreateView(generics.CreateAPIView):
