@@ -1,5 +1,6 @@
 import pytest
 from cars_api import models
+from random import randint
 
 
 @pytest.mark.django_db
@@ -63,3 +64,51 @@ def test_update_car(client, set_up_cars):
     assert response.status_code == 200
     car_obj = models.Car.objects.get(id=car.id)
     assert car_obj.model == new_model
+
+
+@pytest.mark.django_db
+def test_update_to_non_existing_car(client, set_up_cars):
+    car = models.Car.objects.first()
+    response = client.get(f'/cars/{car.id}/', {}, format='json')
+    car_data = response.data
+    new_model = 'Nonexistent'
+    car_data['model'] = new_model
+    response = client.patch(f'/cars/{car.id}/', car_data, format='json')
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_add_car_rate(client, set_up_cars):
+    car = models.Car.objects.first()
+    a = {
+        'car_id': car.id,
+        'rating': randint(1, 5)
+    }
+    print(randint(1, 5))
+    response = client.post('/rate/', data=a, format='json')
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_add_not_existing_car_rate(client):
+    a = {
+        'car_id': randint(1, 100),
+        'rating': randint(1, 5)
+    }
+    response = client.post('/cars/', data=a, format='json')
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_get_popular_cars_list(client, set_up_cars):
+    response = client.get('/popular/', {}, format='json')
+    assert response.status_code == 200
+    assert models.Car.objects.count() == len(response.data)
+
+
+@pytest.mark.django_db
+def test_get_popular_cars_list_ordering(client, set_up_cars, set_up_car_rate):
+    car = models.Car.objects.get(id=set_up_car_rate.car_id.id)
+    response = client.get('/popular/', {}, format='json')
+    assert response.status_code == 200
+    assert car.id == response.data[0]['id']
