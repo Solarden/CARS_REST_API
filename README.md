@@ -21,7 +21,7 @@ if user input really exist. If true it is added to database.
   "make": "Honda",
   "model": "Civic",
   "avg_rating": 5.0 }`
-- POST: enables possibility of updating object with passed ID in URL
+- PATCH: enables possibility of updating object with passed ID in URL
 - DELETE: removes from database object with passed ID in URL. If object with passed ID does not exist returns an error.
 
 # /rate/
@@ -51,6 +51,10 @@ After building up please consider doing migrations!
 - To leave container `exit`
 
 To close active containers use in terminal `^C`
+
+# Tests
+
+To perform tests please enter container then change directory to `cars_api` and execute `pytest tests.py`
 
 # Check me out at heroku!
 https://cars-checker-rest-api.herokuapp.com/cars/
